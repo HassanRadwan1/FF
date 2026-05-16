@@ -28,19 +28,23 @@ class _FamilyFormState extends State<FamilyForm> {
   final _address = TextEditingController();
   final _need = TextEditingController();
 
-  void _copyData() {
+  Widget buildField(TextEditingController c, String label, IconData icon, {int lines = 1}) {
+    return TextField(
+      controller: c,
+      maxLines: lines,
+      textDirection: TextDirection.rtl,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: const OutlineInputBorder(),
+      ),
+    );
+  }
+
+  void copyData() {
     final now = DateTime.now();
     final date = '${now.day}/${now.month}/${now.year}';
-    final text = '''
-📋 بيانات الأسرة
-─────────────────
-👨‍👩‍👧 اسم الأسرة : ${_family.text}
-📞 التليفون   : ${_phone.text}
-📍 العنوان    : ${_address.text}
-🤲 الاحتياج   : ${_need.text}
-─────────────────
-🗓️ التاريخ    : $date''';
-
+    final text = '📋 بيانات الأسرة\n─────────────────\n👨‍👩‍👧 اسم الأسرة : ${_family.text}\n📞 التليفون   : ${_phone.text}\n📍 العنوان    : ${_address.text}\n🤲 الاحتياج   : ${_need.text}\n─────────────────\n🗓️ التاريخ    : $date';
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -63,18 +67,27 @@ class _FamilyFormState extends State<FamilyForm> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              _field(_family, 'اسم الأسرة', Icons.people),
+              buildField(_family, 'اسم الأسرة', Icons.people),
               const SizedBox(height: 16),
-              _field(_phone, 'رقم التليفون', Icons.phone),
+              buildField(_phone, 'رقم التليفون', Icons.phone),
               const SizedBox(height: 16),
-              _field(_address, 'العنوان', Icons.location_on),
+              buildField(_address, 'العنوان', Icons.location_on),
               const SizedBox(height: 16),
-              _field(_need, 'الاحتياج', Icons.favorite, lines: 3),
+              buildField(_need, 'الاحتياج', Icons.favorite, lines: 3),
               const SizedBox(height: 30),
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton.icon(
-                  onPressed: _copyData,
+                  onPressed: copyData,
                   icon: const Icon(Icons.copy),
-                  label: const Text('توليد ونسخ البيانات',
+                  label: const Text('توليد ونسخ البيانات', style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
